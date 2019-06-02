@@ -6,6 +6,8 @@ TagManager:
   tags:
   - SnakeHead
   - SnakeBody
+  - NorthButton
+  - WestButton
   layers:
   - Default
   - TransparentFX

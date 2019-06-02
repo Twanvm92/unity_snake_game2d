@@ -2,9 +2,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
+  public Button SnakeNorthButton, SnakeEastButton, SnakeSouthButton, SnakeWestButton;
 	[SerializeField] private SnakePartsController snakePartsController;
 	[SerializeField] private SnakeController snakeController;
 	[SerializeField] private SpawnerController spawnerController;
@@ -12,8 +14,33 @@ public class GameManager : MonoBehaviour
 	private void Start()
 	{
 		snakeController.Initialize(snakePartsController, spawnerController);
+	  SnakeNorthButton.onClick.AddListener(SnakeMoveNorth);
+	  SnakeEastButton.onClick.AddListener(SnakeMoveEast);
+	  SnakeSouthButton.onClick.AddListener(SnakeMoveSouth);
+	  SnakeWestButton.onClick.AddListener(SnakeMoveWest);
 	}
-    
+
+  public void SnakeMoveNorth()
+  {
+  snakeController.Move((int) SnakeController.headDirections.North);
+  }
+
+  public void SnakeMoveEast()
+  {
+    snakeController.Move((int) SnakeController.headDirections.East);
+    Debug.Log("Al mn strijders uit t oosten");
+  }
+
+  public void SnakeMoveSouth()
+  {
+    snakeController.Move((int) SnakeController.headDirections.South);
+  }
+
+  public void SnakeMoveWest()
+  {
+    snakeController.Move((int) SnakeController.headDirections.West);
+  }
+
     // Update is called once per frame
     void Update()
     {
@@ -35,5 +62,4 @@ public class GameManager : MonoBehaviour
         }
 //        transform.position = new Vector3(headPosition.x, headPosition.y);
     }
-
 }
