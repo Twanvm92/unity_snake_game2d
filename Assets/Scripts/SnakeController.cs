@@ -91,6 +91,10 @@ public class SnakeController : MonoBehaviour
         Vector3 snakeHeadPos = new Vector3(headPosition.x, headPosition.y);
         spawnerController.SpawnSnakeHead(snakeHead, snakeHeadPos);
         
+        
+//        TODO spawn food before snakehead initialization location vector gets added back to empty cells
+        spawnerController.AddEmptyCell(snakeHeadPos);
+        
     }
 
     public void Initialize(SnakePartsController snakePartsController, SpawnerController spawnerController)

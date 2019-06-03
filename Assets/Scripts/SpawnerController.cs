@@ -78,6 +78,8 @@ public class SpawnerController : MonoBehaviour
         emptyCells.Add(vector2);
     }
 
+    
+//    TODO change to use colliders for border?
     public bool IsNewGridPositionValid(Vector3 vector3)
     {
         Vector2Int vector2 = new Vector2Int((int) vector3.x, (int) vector3.y);
