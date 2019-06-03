@@ -16,13 +16,14 @@ public class GameManager : MonoBehaviour
 		snakeController.Initialize(snakePartsController, spawnerController);
 //		TODO your own method instead of RestartGame?
 		snakeController.OnPlayerHitWallOrSnake += RestartGame;
-		
+
 		InvokeRepeating("MoveSnakeHeadDirection", 1.0f, 0.5f);
 	}
 
+  //TODO Opposite direction possible if step keys are spammed fast enough
   public void SnakeMoveNorth()
   {
-  snakeController.Move((int) SnakeController.headDirections.North);
+    snakeController.Move((int) SnakeController.headDirections.North);
   }
 
   public void SnakeMoveEast()
