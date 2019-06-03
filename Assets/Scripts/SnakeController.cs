@@ -49,14 +49,22 @@ public class SnakeController : MonoBehaviour
         if (Math.Abs(direction - snakeHeadDirection) != 2)
         {
 
+            snakeHeadDirection = direction;
+
+        }
+        
+    }
+
+    public void Move()
+    {
             GameObject snakeHead = snakeBody.RemoveBack();
             oldSnakeHeadX = snakeHead.transform.position.x;
             oldSnakeHeadY = snakeHead.transform.position.y;
             PrepareToSpawnSnakeBodyPart();
 
 //            update Snakehead to new coordinates
-            var newSnakeHeadX = oldSnakeHeadX + snakeStepMapping[direction][0];
-            var newSnakeHeadY = oldSnakeHeadY + snakeStepMapping[direction][1];
+            var newSnakeHeadX = oldSnakeHeadX + snakeStepMapping[snakeHeadDirection][0];
+            var newSnakeHeadY = oldSnakeHeadY + snakeStepMapping[snakeHeadDirection][1];
             Vector3 newSnakeHeadVector = new Vector3(newSnakeHeadX, newSnakeHeadY);
             if (spawnerController.IsNewGridPositionValid(newSnakeHeadVector))
             {
@@ -73,9 +81,7 @@ public class SnakeController : MonoBehaviour
 //          TODO  check if snake ate first
             RemoveSnakeTail();
 
-            snakeHeadDirection = direction;
-
-        }
+//            snakeHeadDirection = direction;
         
     }
 
