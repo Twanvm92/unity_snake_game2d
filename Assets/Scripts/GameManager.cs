@@ -1,18 +1,21 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
 	[SerializeField] private SnakePartsController snakePartsController;
 	[SerializeField] private SnakeController snakeController;
 	[SerializeField] private SpawnerController spawnerController;
+	[SerializeField] private Background background;
 
 	private void Start()
 	{
+		spawnerController.Initialize(background);
 		snakeController.Initialize(snakePartsController, spawnerController);
+//		TODO your own method instead of RestartGame?
+		snakeController.OnPlayerHitWallOrSnake += RestartGame;
 	}
 
   public void SnakeMoveNorth()
@@ -56,4 +59,10 @@ public class GameManager : MonoBehaviour
         }
 //        transform.position = new Vector3(headPosition.x, headPosition.y);
     }
+
+//    TODO Restart game/ win/lose screen?
+    private void RestartGame()
+    {
+	    SceneManager.LoadScene( SceneManager.GetActiveScene().name );
+	}
 }
