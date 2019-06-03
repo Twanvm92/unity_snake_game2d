@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class SnakeController : MonoBehaviour
 {
@@ -13,6 +14,7 @@ public class SnakeController : MonoBehaviour
     private SpawnerController spawnerController;
     private float oldSnakeHeadX;
     private float oldSnakeHeadY;
+    public event Action OnPlayerHitWallOrSnake;
 
     private Dictionary<int, int[]> snakeStepMapping = new Dictionary<int, int[]>
     {
@@ -44,7 +46,7 @@ public class SnakeController : MonoBehaviour
 
     public void Move(int direction)
     {
-        if (direction - snakeHeadDirection != Math.Abs(2))
+        if (Math.Abs(direction - snakeHeadDirection) != 2)
         {
 
             GameObject snakeHead = snakeBody.RemoveBack();
@@ -55,8 +57,18 @@ public class SnakeController : MonoBehaviour
 //            update Snakehead to new coordinates
             var newSnakeHeadX = oldSnakeHeadX + snakeStepMapping[direction][0];
             var newSnakeHeadY = oldSnakeHeadY + snakeStepMapping[direction][1];
-            snakeHead.transform.position = new Vector3(newSnakeHeadX, newSnakeHeadY);
-            snakeBody.AddBack(snakeHead);
+            Vector3 newSnakeHeadVector = new Vector3(newSnakeHeadX, newSnakeHeadY);
+            if (spawnerController.IsNewGridPositionValid(newSnakeHeadVector))
+            {
+                snakeHead.transform.position = newSnakeHeadVector;
+                snakeBody.AddBack(snakeHead);
+            }
+            else
+            {
+                OnPlayerHitWallOrSnake.Invoke();
+                
+            }
+            
             
 //          TODO  check if snake ate first
             RemoveSnakeTail();
@@ -115,6 +127,7 @@ public class SnakeController : MonoBehaviour
         if (snakeBody.Count > 1)
         {
             GameObject snakeTail = snakeBody.RemoveFront();
+            spawnerController.AddEmptyCell(snakeTail.transform.position);
             Destroy(snakeTail);
         }
     }
