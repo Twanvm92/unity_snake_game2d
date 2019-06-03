@@ -6,7 +6,6 @@ using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
-  public Button SnakeNorthButton, SnakeEastButton, SnakeSouthButton, SnakeWestButton;
 	[SerializeField] private SnakePartsController snakePartsController;
 	[SerializeField] private SnakeController snakeController;
 	[SerializeField] private SpawnerController spawnerController;
@@ -14,10 +13,6 @@ public class GameManager : MonoBehaviour
 	private void Start()
 	{
 		snakeController.Initialize(snakePartsController, spawnerController);
-	  SnakeNorthButton.onClick.AddListener(SnakeMoveNorth);
-	  SnakeEastButton.onClick.AddListener(SnakeMoveEast);
-	  SnakeSouthButton.onClick.AddListener(SnakeMoveSouth);
-	  SnakeWestButton.onClick.AddListener(SnakeMoveWest);
 	}
 
   public void SnakeMoveNorth()
@@ -28,7 +23,6 @@ public class GameManager : MonoBehaviour
   public void SnakeMoveEast()
   {
     snakeController.Move((int) SnakeController.headDirections.East);
-    Debug.Log("Al mn strijders uit t oosten");
   }
 
   public void SnakeMoveSouth()
