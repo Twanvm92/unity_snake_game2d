@@ -15,6 +15,8 @@ public class GameManager : MonoBehaviour
 		snakeController.Initialize(snakePartsController, spawnerController);
 //		TODO your own method instead of RestartGame?
 		snakeController.OnPlayerHitWallOrSnake += RestartGame;
+		
+		InvokeRepeating("MoveSnakeHeadDirection", 1.0f, 0.5f);
 	}
     
     // Update is called once per frame
@@ -36,7 +38,11 @@ public class GameManager : MonoBehaviour
         {
 	        snakeController.Move((int) SnakeController.headDirections.West);
         }
-//        transform.position = new Vector3(headPosition.x, headPosition.y);
+    }
+
+    private void MoveSnakeHeadDirection()
+    {
+	    snakeController.Move();
     }
 
 //    TODO Restart game/ win/lose screen?
