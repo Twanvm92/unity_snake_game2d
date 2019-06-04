@@ -8,15 +8,18 @@ public class GameManager : MonoBehaviour
 	[SerializeField] private SnakeController snakeController;
 	[SerializeField] private SpawnerController spawnerController;
 	[SerializeField] private Background background;
+	[SerializeField] private FoodController foodController;
 
 	private void Start()
 	{
+		 
 		spawnerController.Initialize(background);
-		snakeController.Initialize(snakePartsController, spawnerController);
+		foodController.Initialize(spawnerController);
+		snakeController.Initialize(snakePartsController, spawnerController, foodController);
 //		TODO your own method instead of RestartGame?
 		snakeController.OnPlayerHitWallOrSnake += RestartGame;
 		
-		InvokeRepeating("MoveSnakeHeadDirection", 1.0f, 0.5f);
+		InvokeRepeating("MoveSnakeHeadDirection", 1.0f, 0.7f);
 	}
     
     // Update is called once per frame

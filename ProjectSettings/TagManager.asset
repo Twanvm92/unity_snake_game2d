@@ -6,6 +6,8 @@ TagManager:
   tags:
   - SnakeHead
   - SnakeBody
+  - Border
+  - Food
   layers:
   - Default
   - TransparentFX

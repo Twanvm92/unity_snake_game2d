@@ -1,54 +1,45 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
+using Random = System.Random;
 
 public class SpawnerController : MonoBehaviour
 {
 
     private Background background;
-    private HashSet<Vector2Int> emptyCells = new HashSet<Vector2Int>();
+    public HashSet<Vector2Int> emptyCells = new HashSet<Vector2Int>();
 
 
 
     public event Action<GameObject> OnSnakeHeadSpawned;
 
     public event Action<GameObject> OnSnakeBodyPartSpawned;
-    // Start is called before the first frame update
-    void Start()
-    {
-
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 
     public void SpawnSnakeHead(GameObject gameObject, Vector3 vector3)
     {
-        if (IsNewGridPositionValid(vector3))
-        {
-            Vector2Int vector2 = new Vector2Int((int) vector3.x, (int) vector3.y);
-            GameObject snakeHead = Instantiate(gameObject, vector3, Quaternion.identity);
-            emptyCells.Remove(vector2);
-            OnSnakeHeadSpawned?.Invoke(snakeHead);
+        GameObject snakeHead = Instantiate(gameObject, vector3, Quaternion.identity);
+        OnSnakeHeadSpawned?.Invoke(snakeHead);
             
-        }
-        
     }
 
     public void SpawnSnakeBodyPart(GameObject gameObject, Vector3 vector3)
     {
-        if (IsNewGridPositionValid(vector3))
-        {
-            Vector2Int vector2 = new Vector2Int((int) vector3.x, (int) vector3.y);
-            GameObject snakeBodyPart = Instantiate(gameObject, vector3, Quaternion.identity);
-            emptyCells.Remove(vector2);
-            OnSnakeBodyPartSpawned?.Invoke(snakeBodyPart);
+        GameObject snakeBodyPart = Instantiate(gameObject, vector3, Quaternion.identity);
+        OnSnakeBodyPartSpawned?.Invoke(snakeBodyPart);
             
-        }
+    }
+
+    public void SpawnFood(GameObject gameObject)
+    {
+        Random randomizer = new Random();
+        Vector2Int[] asArray = emptyCells.ToArray();
+        Vector2Int randomEmptyCellVector = asArray[randomizer.Next(asArray.Length)];
+        Vector3 vector3 = new Vector3(randomEmptyCellVector.x, randomEmptyCellVector.y);
+        Instantiate(gameObject, vector3, Quaternion.identity);
+
+        emptyCells.Remove(randomEmptyCellVector);
     }
 
     public void Initialize(Background background)
@@ -60,7 +51,6 @@ public class SpawnerController : MonoBehaviour
         int backgroundMinY = (int) this.background.GetComponent<SpriteRenderer>().bounds.min.y + borderOffset;
         int backgroundMaxY = (int) this.background.GetComponent<SpriteRenderer>().bounds.max.y;
         
-        Debug.Log("Initialize empty cells");
 //        start i and j index at 1 instead of 0 and go until second last value of x and y to add a padding of 1 around the grid
         for (int i = backgroundMinX; i < backgroundMaxX; i++)
         {
@@ -78,11 +68,11 @@ public class SpawnerController : MonoBehaviour
         emptyCells.Add(vector2);
     }
 
-    
-//    TODO change to use colliders for border?
-    public bool IsNewGridPositionValid(Vector3 vector3)
+    public void RemoveEmptyCell(Vector3 vector3)
     {
         Vector2Int vector2 = new Vector2Int((int) vector3.x, (int) vector3.y);
-        return emptyCells.Contains(vector2);
+        emptyCells.Remove(vector2);
     }
+
+    
 }
