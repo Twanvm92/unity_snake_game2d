@@ -70,6 +70,9 @@ public class GameManager : MonoBehaviour
 //    TODO Restart game/ win/lose screen?
     private void RestartGame()
     {
-	    SceneManager.LoadScene( SceneManager.GetActiveScene().name );
+
+
+
+     SceneManager.LoadScene( SceneManager.GetActiveScene().name );
 	}
 }
