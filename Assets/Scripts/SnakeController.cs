@@ -12,9 +12,12 @@ public class SnakeController : MonoBehaviour
     private SnakePartsController snakePartsController;
     private Deque<GameObject> snakeBody = new Deque<GameObject>();
     private SpawnerController spawnerController;
+    private FoodController foodController;
+    private SnakeHead snakeHead;
     private float oldSnakeHeadX;
     private float oldSnakeHeadY;
     public event Action OnPlayerHitWallOrSnake;
+    private bool foodEaten;
 
     private Dictionary<int, int[]> snakeStepMapping = new Dictionary<int, int[]>
     {
@@ -39,11 +42,6 @@ public class SnakeController : MonoBehaviour
 
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-    }
-
     public void Move(int direction)
     {
         if (Math.Abs(direction - snakeHeadDirection) != 2)
@@ -58,31 +56,30 @@ public class SnakeController : MonoBehaviour
     public void Move()
     {
             GameObject snakeHead = snakeBody.RemoveBack();
-            oldSnakeHeadX = snakeHead.transform.position.x;
-            oldSnakeHeadY = snakeHead.transform.position.y;
-            PrepareToSpawnSnakeBodyPart();
+            Vector3 oldSnakeHeadVector = snakeHead.transform.position;
+            oldSnakeHeadX = oldSnakeHeadVector.x;
+            oldSnakeHeadY = oldSnakeHeadVector.y;
 
 //            update Snakehead to new coordinates
             var newSnakeHeadX = oldSnakeHeadX + snakeStepMapping[snakeHeadDirection][0];
             var newSnakeHeadY = oldSnakeHeadY + snakeStepMapping[snakeHeadDirection][1];
             Vector3 newSnakeHeadVector = new Vector3(newSnakeHeadX, newSnakeHeadY);
-            if (spawnerController.IsNewGridPositionValid(newSnakeHeadVector))
-            {
-                snakeHead.transform.position = newSnakeHeadVector;
-                snakeBody.AddBack(snakeHead);
-            }
-            else
-            {
-                OnPlayerHitWallOrSnake.Invoke();
-                
-            }
             
+
+//                put prepareToSpawnSnakeBodyPart() after setting position of new snake head
+//                otherwise foodEaten cannot be set to true through collision event before snake body part is spawned
+            snakeHead.transform.position = newSnakeHeadVector;
+            
+            spawnerController.AddEmptyCell(oldSnakeHeadVector);
+            spawnerController.RemoveEmptyCell(newSnakeHeadVector);
+            
+            PrepareToSpawnSnakeBodyPart();
+            snakeBody.AddBack(snakeHead);
             
 //          TODO  check if snake ate first
             RemoveSnakeTail();
+            SetFoodEaten(false);
 
-//            snakeHeadDirection = direction;
-        
     }
 
     private void InstantiateSnakeHead()
@@ -90,14 +87,15 @@ public class SnakeController : MonoBehaviour
         GameObject snakeHead = snakeParts.Find(i => i.CompareTag("SnakeHead"));
         Vector3 snakeHeadPos = new Vector3(headPosition.x, headPosition.y);
         spawnerController.SpawnSnakeHead(snakeHead, snakeHeadPos);
+        spawnerController.RemoveEmptyCell(snakeHeadPos);
         
         
-//        TODO spawn food before snakehead initialization location vector gets added back to empty cells
-        spawnerController.AddEmptyCell(snakeHeadPos);
+        foodController.InitializeFood();
         
     }
 
-    public void Initialize(SnakePartsController snakePartsController, SpawnerController spawnerController)
+    public void Initialize(SnakePartsController snakePartsController, SpawnerController spawnerController,
+        FoodController foodController)
     {
         this.snakePartsController = snakePartsController;
 		foreach (Transform snakePart in this.snakePartsController.transform)
@@ -105,11 +103,36 @@ public class SnakeController : MonoBehaviour
 			snakeParts.Add(snakePart.gameObject);	
 		}
 
+        this.foodController = foodController;
+            
         this.spawnerController = spawnerController;
-        this.spawnerController.OnSnakeHeadSpawned += snakeHead => PersistSnakePart(snakeHead);
+        this.spawnerController.OnSnakeHeadSpawned += snakeHead => SnakeHeadCreated(snakeHead);
         this.spawnerController.OnSnakeBodyPartSpawned += snakeBodyPart => PersistSnakePart(snakeBodyPart);
         
         InstantiateSnakeHead();
+    }
+
+    private void SnakeHitSomething()
+    {
+        OnPlayerHitWallOrSnake.Invoke();
+    }
+
+    private void SnakeHeadCreated(GameObject gameObject)
+    {
+        snakeHead = gameObject.GetComponent<SnakeHead>();
+        snakeHead.OnBorderSnakeCollision += SnakeHitSomething;
+        snakeHead.OnSnakeAteFood += snakeAteFood =>
+        {
+            SetFoodEaten(snakeAteFood);
+            foodController.InitializeFood();
+        };
+        PersistSnakePart(gameObject);
+        
+    }
+
+    private void SetFoodEaten(bool foodEaten)
+    {
+        this.foodEaten = foodEaten;
     }
 
     private void PersistSnakePart(GameObject snakePart)
@@ -122,23 +145,23 @@ public class SnakeController : MonoBehaviour
 //        make sure to spawn a new body part at the old snake head position
 //        only if the snake body is longer than just the head or the snake ate food
 //        TODO Also check if food has been eaten with an OR! Otherwise snake never gets longer
-        if (snakeBody.Count > 1)
+        if (snakeBody.Count > 0 || foodEaten)
         {
             Vector3 snakeBodyPartPos = new Vector3(oldSnakeHeadX, oldSnakeHeadY);
             GameObject  snakeBodyPart = snakeParts.Find(i => i.CompareTag("SnakeBody"));
             spawnerController.SpawnSnakeBodyPart(snakeBodyPart, snakeBodyPartPos);
+            spawnerController.RemoveEmptyCell(snakeBodyPartPos);
         }
         
     }
 
     private void RemoveSnakeTail()
     {
-        Debug.Log(snakeBody.Count);
-        if (snakeBody.Count > 1)
+        if (snakeBody.Count > 1 && foodEaten != true)
         {
             GameObject snakeTail = snakeBody.RemoveFront();
-            spawnerController.AddEmptyCell(snakeTail.transform.position);
             Destroy(snakeTail);
+            spawnerController.AddEmptyCell(snakeTail.transform.position);
         }
     }
 }

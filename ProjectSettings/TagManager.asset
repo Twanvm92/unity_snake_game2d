@@ -8,6 +8,8 @@ TagManager:
   - SnakeBody
   - NorthButton
   - WestButton
+  - Border
+  - Food
   layers:
   - Default
   - TransparentFX
