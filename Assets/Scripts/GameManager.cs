@@ -10,17 +10,19 @@ public class GameManager : MonoBehaviour
 	[SerializeField] private SpawnerController spawnerController;
 	[SerializeField] private Background background;
 	[SerializeField] private FoodController foodController;
-
+	[SerializeField] private ScoreManager scoreManager;
+	private float snakeSpeed;
 	private void Start()
 	{
-		 
+		snakeSpeed = 0.5f;
 		spawnerController.Initialize(background);
 		foodController.Initialize(spawnerController);
-		snakeController.Initialize(snakePartsController, spawnerController, foodController);
+		snakeController.Initialize(snakePartsController, spawnerController, foodController, scoreManager);
 //		TODO your own method instead of RestartGame?
 		snakeController.OnPlayerHitWallOrSnake += RestartGame;
+		scoreManager.OnScoreReachedBoundary += GameWon;
 		
-		InvokeRepeating("MoveSnakeHeadDirection", 1.0f, 0.7f);
+		InvokeRepeating("MoveSnakeHeadDirection", 1.0f, 0.5f);
 	}
 
   //TODO Opposite direction possible if step keys are spammed fast enough
@@ -75,4 +77,9 @@ public class GameManager : MonoBehaviour
     {
 	    SceneManager.LoadScene( SceneManager.GetActiveScene().name );
 	}
+
+    private void GameWon()
+    {
+	    Debug.Log("You won the game!");
+    }
 }

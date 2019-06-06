@@ -13,6 +13,7 @@ public class SnakeController : MonoBehaviour
     private Deque<GameObject> snakeBody = new Deque<GameObject>();
     private SpawnerController spawnerController;
     private FoodController foodController;
+    private ScoreManager scoreManager;
     private SnakeHead snakeHead;
     private float oldSnakeHeadX;
     private float oldSnakeHeadY;
@@ -95,8 +96,9 @@ public class SnakeController : MonoBehaviour
     }
 
     public void Initialize(SnakePartsController snakePartsController, SpawnerController spawnerController,
-        FoodController foodController)
+        FoodController foodController, ScoreManager scoreManager)
     {
+        this.scoreManager = scoreManager;
         this.snakePartsController = snakePartsController;
 		foreach (Transform snakePart in this.snakePartsController.transform)
 		{
@@ -125,6 +127,8 @@ public class SnakeController : MonoBehaviour
         {
             SetFoodEaten(snakeAteFood);
             foodController.InitializeFood();
+            scoreManager.UpdateScore();
+            
         };
         PersistSnakePart(gameObject);
         
