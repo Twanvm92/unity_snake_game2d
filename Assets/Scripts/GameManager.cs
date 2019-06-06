@@ -14,6 +14,7 @@ public class GameManager : MonoBehaviour
 	[SerializeField] private ScoreManager scoreManager;
 	private float snakeSpeed;
 	private float initialWaitTime = 1.0f;
+	private float snakeSpeedIncrease = 0.075f;
 	
 	
 	private void Start()
@@ -48,7 +49,7 @@ public class GameManager : MonoBehaviour
 	{
 		if (score % 2 == 0)
 		{
-			snakeSpeed -= 0.05f;
+			snakeSpeed -= snakeSpeedIncrease;
 		}
 	}
 
