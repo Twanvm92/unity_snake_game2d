@@ -10,9 +10,10 @@ public class ScoreManager : MonoBehaviour
     private int scoreBoundary;
 	public Text scoreDisplay;
 
-    public event Action OnScoreReachedBoundary; 
+    public event Action OnScoreReachedBoundary;
+    public event Action<int> OnScoreChanged;
 
-	private void Update()
+    private void Update()
 	{
 		scoreDisplay.text = score.ToString();
 	}
@@ -21,6 +22,7 @@ public class ScoreManager : MonoBehaviour
     {
         score++;
         Debug.Log("Score: "  + score);
+        OnScoreChanged?.Invoke(score);
 
         if (score >= 10)
         {
