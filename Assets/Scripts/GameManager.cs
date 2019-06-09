@@ -9,14 +9,20 @@ public class GameManager : MonoBehaviour
 	[SerializeField] private SnakeController snakeController;
 	[SerializeField] private SpawnerController spawnerController;
 	[SerializeField] private Background background;
-
+	[SerializeField] private FoodController foodController;
+	[SerializeField] private ScoreManager scoreManager;
+	[SerializeField] private UIManager uiManager;
+	private float snakeSpeed;
 	private void Start()
 	{
+		snakeSpeed = 0.5f;
 		spawnerController.Initialize(background);
-		snakeController.Initialize(snakePartsController, spawnerController);
+		foodController.Initialize(spawnerController);
+		snakeController.Initialize(snakePartsController, spawnerController, foodController, scoreManager);
 //		TODO your own method instead of RestartGame?
 		snakeController.OnPlayerHitWallOrSnake += RestartGame;
-
+		scoreManager.OnScoreReachedBoundary += GameWon;
+		
 		InvokeRepeating("MoveSnakeHeadDirection", 1.0f, 0.5f);
 	}
 
@@ -70,9 +76,13 @@ public class GameManager : MonoBehaviour
 //    TODO Restart game/ win/lose screen?
     private void RestartGame()
     {
+	    Time.timeScale = 0;
+	    uiManager.SetLoseScreen();
+    }
 
-
-
-     SceneManager.LoadScene( SceneManager.GetActiveScene().name );
-	}
+    private void GameWon()
+    {
+	    Time.timeScale = 0;
+	    uiManager.SetWinScreen();
+    }
 }

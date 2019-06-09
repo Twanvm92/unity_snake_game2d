@@ -4,10 +4,15 @@
 TagManager:
   serializedVersion: 2
   tags:
+  - Music
   - SnakeHead
   - SnakeBody
-  - NorthButton
-  - WestButton
+  - Border
+  - Food
+  - SnakeHead0
+  - SnakeHead1
+  - SnakeHead2
+  - SnakeHead3
   layers:
   - Default
   - TransparentFX
@@ -44,10 +49,4 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
-    locked: 0
-  - name: Background
-    uniqueID: 3530158767
-    locked: 0
-  - name: new
-    uniqueID: 2016617149
     locked: 0
