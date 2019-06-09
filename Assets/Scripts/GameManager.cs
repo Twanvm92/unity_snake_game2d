@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
@@ -13,6 +14,10 @@ public class GameManager : MonoBehaviour
 	[SerializeField] private ScoreManager scoreManager;
 	[SerializeField] private UIManager uiManager;
 	private float snakeSpeed;
+	private float initialWaitTime = 1.0f;
+	private float snakeSpeedIncrease = 0.075f;
+	
+	
 	private void Start()
 	{
 		snakeSpeed = 0.5f;
@@ -22,8 +27,44 @@ public class GameManager : MonoBehaviour
 //		TODO your own method instead of RestartGame?
 		snakeController.OnPlayerHitWallOrSnake += RestartGame;
 		scoreManager.OnScoreReachedBoundary += GameWon;
+
+		scoreManager.OnScoreChanged += score => ChangeSnakeSpeed(score);
 		
-		InvokeRepeating("MoveSnakeHeadDirection", 1.0f, 0.5f);
+//		InvokeRepeating("MoveSnakeHeadDirection", 1.0f, 0.5f);
+//
+//		while (true)
+//		{
+//			yield return new WaitForSeconds(snakeSpeed);
+//			MoveSnakeHeadDirection();
+//			
+//		}
+
+//		WaitFunction func = Wait;
+//		StartCoroutine(func(2));
+//		
+
+		StartCoroutine(MoveSnakeInInterval(initialWaitTime));
+
+	}
+
+	private void ChangeSnakeSpeed(int score)
+	{
+		if (score % 2 == 0)
+		{
+			snakeSpeed -= snakeSpeedIncrease;
+		}
+	}
+
+	IEnumerator MoveSnakeInInterval(float f)
+	{
+		yield return new WaitForSeconds(f);
+		Debug.Log(f + " " + Time.time);
+		while( true )
+		{
+            MoveSnakeHeadDirection();
+			Debug.Log ("current snake speed is "+ snakeSpeed);
+			yield return new WaitForSeconds(snakeSpeed) ;
+		}
 	}
 
   //TODO Opposite direction possible if step keys are spammed fast enough
@@ -47,7 +88,8 @@ public class GameManager : MonoBehaviour
     snakeController.Move((int) SnakeController.headDirections.West);
   }
 
-    // Update is called once per frame
+
+  // Update is called once per frame
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.UpArrow))
@@ -86,3 +128,4 @@ public class GameManager : MonoBehaviour
 	    uiManager.SetWinScreen();
     }
 }
+

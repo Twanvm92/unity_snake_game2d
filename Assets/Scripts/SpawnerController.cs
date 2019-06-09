@@ -38,7 +38,7 @@ public class SpawnerController : MonoBehaviour
         Vector2Int randomEmptyCellVector = asArray[randomizer.Next(asArray.Length)];
         Vector3 vector3 = new Vector3(randomEmptyCellVector.x, randomEmptyCellVector.y);
         Instantiate(gameObject, vector3, Quaternion.identity);
-        
+
         emptyCells.Remove(randomEmptyCellVector);
     }
 

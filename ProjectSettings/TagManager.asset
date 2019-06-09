@@ -9,10 +9,8 @@ TagManager:
   - SnakeBody
   - Border
   - Food
-  - SnakeHead0
-  - SnakeHead1
-  - SnakeHead2
-  - SnakeHead3
+  - NorthButton
+  - WestButton
   layers:
   - Default
   - TransparentFX
