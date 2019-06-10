@@ -20,6 +20,7 @@ public class GameManager : MonoBehaviour
 	
 	private void Start()
 	{
+		Time.timeScale = 1;
 		snakeSpeed = 0.5f;
 		spawnerController.Initialize(background);
 		foodController.Initialize(spawnerController);
