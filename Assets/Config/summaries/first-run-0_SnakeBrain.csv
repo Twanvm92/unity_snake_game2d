@@ -1,0 +1,3 @@
+Brain name,Time to update policy,Time since start of training,Time for last experience collection,Number of experiences used for training,Mean return
+SnakeBrain,1.940,99.649,78.659,10253,-12.520
+SnakeBrain,0.839,190.075,73.647,10255,-12.649

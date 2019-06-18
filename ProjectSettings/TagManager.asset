@@ -10,6 +10,29 @@ TagManager:
   - WestButton
   - Border
   - Food
+  - target
+  - ground
+  - wall
+  - block
+  - goal
+  - agent
+  - banana
+  - stone
+  - pyramid
+  - walkableSurface
+  - blueAgent
+  - blueGoal
+  - redGoal
+  - ball
+  - orangeGoal
+  - orangeBlock
+  - redBlock
+  - iWall
+  - switchOff
+  - badBanana
+  - pit
+  - AiSnakeHead
+  - AiSnakeHead2
   layers:
   - Default
   - TransparentFX

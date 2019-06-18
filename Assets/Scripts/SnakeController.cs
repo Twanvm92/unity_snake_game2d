@@ -4,57 +4,26 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class SnakeController : MonoBehaviour
+public class SnakeController : ISnakeController
 {
-    private Vector2Int headPosition;
-    private int snakeHeadDirection;
-    private List<GameObject> snakeParts = new List<GameObject>();
-    private SnakePartsController snakePartsController;
-    private Deque<GameObject> snakeBody = new Deque<GameObject>();
-    private SpawnerController spawnerController;
-    private FoodController foodController;
-    private ScoreManager scoreManager;
-    private SnakeHead snakeHead;
-    private float oldSnakeHeadX;
-    private float oldSnakeHeadY;
+    public SnakeHead snakeHead;
     public event Action OnPlayerHitWallOrSnake;
-    private bool foodEaten;
-
-    private Dictionary<int, int[]> snakeStepMapping = new Dictionary<int, int[]>
-    {
-        [0] = new[] {0, 1},
-        [1] = new[] {1, 0},
-        [2] = new[] {0, -1},
-        [3] = new[] {-1, 0}
-    };
-
-    public enum headDirections
-    {
-        North = 0,
-        East = 1,
-        South = 2,
-        West = 3
-    }
     
     private void Start()
     {
-        headPosition = new Vector2Int(0, 8);
+        initialHeadPositionX = -4;
+        initialHeadPositionY = 8;
+        headPosition = new Vector2Int(initialHeadPositionX, initialHeadPositionY);
         snakeHeadDirection = (int) headDirections.North;
 
     }
 
-    public void Move(int direction)
+    public override void Move(int direction)
     {
-        if (Math.Abs(direction - snakeHeadDirection) != 2)
-        {
-
-            snakeHeadDirection = direction;
-
-        }
-        
+        UpdateSnakeHeadDirection(direction);
     }
 
-    public void Move()
+    public override void Move()
     {
             GameObject snakeHead = snakeBody.RemoveBack();
             Vector3 oldSnakeHeadVector = snakeHead.transform.position;
@@ -74,77 +43,83 @@ public class SnakeController : MonoBehaviour
             spawnerController.AddEmptyCell(oldSnakeHeadVector);
             spawnerController.RemoveEmptyCell(newSnakeHeadVector);
             
-            PrepareToSpawnSnakeBodyPart();
+            PrepareToSpawnPlayerSnakeBodyPart();
             snakeBody.AddBack(snakeHead);
             
 //          TODO  check if snake ate first
             RemoveSnakeTail();
+
+            if (!foodEaten)
+            {
+                RaiseOnEmptyStepTaken(snakeTypes.Player);
+            }
+            
             SetFoodEaten(false);
 
     }
 
-    private void InstantiateSnakeHead()
+    protected override void InstantiateSnakeHead()
     {
+        Debug.Log("Instantiating player snake head");
         GameObject snakeHead = snakeParts.Find(i => i.CompareTag("SnakeHead"));
         Vector3 snakeHeadPos = new Vector3(headPosition.x, headPosition.y);
         spawnerController.SpawnSnakeHead(snakeHead, snakeHeadPos);
         spawnerController.RemoveEmptyCell(snakeHeadPos);
         
         
-        foodController.InitializeFood();
-        
     }
 
-    public void Initialize(SnakePartsController snakePartsController, SpawnerController spawnerController,
-        FoodController foodController, ScoreManager scoreManager)
+    protected override void SnakeHitSomething()
     {
-        this.scoreManager = scoreManager;
-        this.snakePartsController = snakePartsController;
-		foreach (Transform snakePart in this.snakePartsController.transform)
-		{
-			snakeParts.Add(snakePart.gameObject);	
-		}
-
-        this.foodController = foodController;
-            
-        this.spawnerController = spawnerController;
-        this.spawnerController.OnSnakeHeadSpawned += snakeHead => SnakeHeadCreated(snakeHead);
-        this.spawnerController.OnSnakeBodyPartSpawned += snakeBodyPart => PersistSnakePart(snakeBodyPart);
-        
-        InstantiateSnakeHead();
+        Debug.Log("Player snake hit something");
+        RaiseSnakeHitSomethingEvent(snakeTypes.Player);
+//        TODO adjusted for agent to get event on hit something
+        OnPlayerHitWallOrSnake?.Invoke();
     }
 
-    private void SnakeHitSomething()
-    {
-        OnPlayerHitWallOrSnake.Invoke();
-    }
-
-    private void SnakeHeadCreated(GameObject gameObject)
+    protected override void PlayerSnakeHeadCreated(GameObject gameObject)
     {
         snakeHead = gameObject.GetComponent<SnakeHead>();
         snakeHead.OnBorderSnakeCollision += SnakeHitSomething;
         snakeHead.OnSnakeAteFood += snakeAteFood =>
         {
             SetFoodEaten(snakeAteFood);
-            foodController.InitializeFood();
-            scoreManager.UpdateScore();
+            RaiseSnakeAteFood(snakeTypes.Player);
+            foodController.Reset();
+            food = foodController.InitializeFood();
+            scoreManager.UpdatePlayerScore();
             
         };
-        PersistSnakePart(gameObject);
-        
+        snakeHeadObject = gameObject;
+        PersistPlayerSnakePart(gameObject);
     }
 
-    private void SetFoodEaten(bool foodEaten)
+    protected override void AiSnakeHeadCreated(GameObject gameObject)
     {
-        this.foodEaten = foodEaten;
+//        not implemented
     }
 
-    private void PersistSnakePart(GameObject snakePart)
+    protected override void AiSnakeHead2Created(GameObject gameObject)
+    {
+//        not implemented
+    }
+
+    protected override void PersistPlayerSnakePart(GameObject snakePart)
     {
         snakeBody.AddBack(snakePart);
     }
 
-    private void PrepareToSpawnSnakeBodyPart()
+    protected override void PersistAiSnakePart(GameObject snakepart)
+    {
+//        not implemented
+    }
+
+    protected override void PersistAiSnake2Part(GameObject snakepart)
+    {
+//        not implemented
+    }
+
+    protected override void PrepareToSpawnPlayerSnakeBodyPart()
     {
 //        make sure to spawn a new body part at the old snake head position
 //        only if the snake body is longer than just the head or the snake ate food
@@ -153,19 +128,22 @@ public class SnakeController : MonoBehaviour
         {
             Vector3 snakeBodyPartPos = new Vector3(oldSnakeHeadX, oldSnakeHeadY);
             GameObject  snakeBodyPart = snakeParts.Find(i => i.CompareTag("SnakeBody"));
-            spawnerController.SpawnSnakeBodyPart(snakeBodyPart, snakeBodyPartPos);
+            spawnerController.SpawnPlayerSnakeBodyPart(snakeBodyPart, snakeBodyPartPos);
             spawnerController.RemoveEmptyCell(snakeBodyPartPos);
         }
-        
     }
 
-    private void RemoveSnakeTail()
+    protected override void PrepareToSpawnAiSnakeBodyPart()
     {
-        if (snakeBody.Count > 1 && foodEaten != true)
+//        not implemented
+    }
+
+    public override void UpdateSnakeHeadDirection(int action)
+    {
+        if (Math.Abs(action - snakeHeadDirection) != 2)
         {
-            GameObject snakeTail = snakeBody.RemoveFront();
-            Destroy(snakeTail);
-            spawnerController.AddEmptyCell(snakeTail.transform.position);
+            snakeHeadDirection = action;
+
         }
     }
 }

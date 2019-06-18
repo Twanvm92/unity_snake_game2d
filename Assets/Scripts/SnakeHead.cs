@@ -12,14 +12,13 @@ public class SnakeHead : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag("Border") || other.CompareTag("SnakeBody"))
+        if (other.CompareTag("Border") || other.CompareTag("SnakeBody") || other.CompareTag("AiSnakeHead"))
         {
             OnBorderSnakeCollision?.Invoke();
         }
         else if (other.CompareTag("Food"))
         {
 
-            Destroy(other.gameObject);
             OnSnakeAteFood?.Invoke(true);
         }
 

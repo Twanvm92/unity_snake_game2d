@@ -6,7 +6,8 @@ using UnityEngine.UI;
 
 public class ScoreManager : MonoBehaviour
 {
-    private int score;
+    private int playerScore;
+    private int aiScore;
     private int scoreBoundary;
 	public Text scoreDisplay;
 
@@ -15,19 +16,38 @@ public class ScoreManager : MonoBehaviour
 
     private void Update()
 	{
-		scoreDisplay.text = score.ToString();
+		scoreDisplay.text = playerScore.ToString();
 	}
 
-    public void UpdateScore()
+    public void UpdatePlayerScore()
     {
-        score++;
-        Debug.Log("Score: "  + score);
-        OnScoreChanged?.Invoke(score);
+        playerScore++;
+        Debug.Log(" Player Score: "  + playerScore);
+        OnScoreChanged?.Invoke(playerScore + aiScore);
 
-        if (score >= 10)
+        if (playerScore >= 10)
         {
             OnScoreReachedBoundary?.Invoke();
         }
+    }
+
+    public void UpdateAiScore()
+    {
+        aiScore++;
+        Debug.Log("Ai Score: "  + aiScore);
+        OnScoreChanged?.Invoke(aiScore + playerScore);
+
+        if (aiScore >= 10)
+        {
+            OnScoreReachedBoundary?.Invoke();
+        }
+	    
+    }
+
+    public void Reset()
+    {
+        aiScore = 0;
+        playerScore = 0;
     }
     
     

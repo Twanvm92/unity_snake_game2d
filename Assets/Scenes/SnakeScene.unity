@@ -188,7 +188,7 @@ PrefabInstance:
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 1891468203}
+      objectReference: {fileID: 0}
     - target: {fileID: 5958445684741893709, guid: 72f0307d64322174cb2a83885ae1c8aa,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
@@ -638,7 +638,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 10
+  m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &938890730
 GameObject:
@@ -732,6 +732,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 082c5b69bacde514983cd263c8582e93, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  snakeHeadDirection: 0
+  spawnerController: {fileID: 0}
+  foodController: {fileID: 0}
+  snakeHeadObject: {fileID: 0}
+  snakeHead: {fileID: 0}
 --- !u!1 &1015697273
 GameObject:
   m_ObjectHideFlags: 0
@@ -948,6 +953,68 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1133231456}
   m_CullTransparentMesh: 0
+--- !u!1 &1144424248
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1144424250}
+  - component: {fileID: 1144424249}
+  m_Layer: 0
+  m_Name: Academy
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1144424249
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1144424248}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b1d8c98bdf96d9d4b9d4c7eb1a088d93, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  broadcastHub:
+    broadcastingBrains:
+    - {fileID: 11400000, guid: 11ff0e8b768185a4a8d8069a90cb1f0a, type: 2}
+    _brainsToControl: []
+  maxSteps: 0
+  trainingConfiguration:
+    width: 80
+    height: 80
+    qualityLevel: 1
+    timeScale: 100
+    targetFrameRate: -1
+  inferenceConfiguration:
+    width: 1280
+    height: 720
+    qualityLevel: 5
+    timeScale: 1
+    targetFrameRate: 60
+  resetParameters:
+    resetParameters: []
+--- !u!4 &1144424250
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1144424248}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 5.171521, y: 10.118043, z: -2095.844}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 11
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1145326207
 GameObject:
   m_ObjectHideFlags: 0
@@ -1141,7 +1208,7 @@ PrefabInstance:
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 1891468203}
+      objectReference: {fileID: 0}
     - target: {fileID: 5958445684741893709, guid: 72f0307d64322174cb2a83885ae1c8aa,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
@@ -1411,11 +1478,16 @@ MonoBehaviour:
   snakePartsController: {fileID: 1654890243299204822, guid: d221997c3ced2ac47b2d423455151aae,
     type: 3}
   snakeController: {fileID: 938890733}
+  aiSnakeController: {fileID: 1614168916}
+  aiSnakeController2: {fileID: 0}
   spawnerController: {fileID: 1928934011}
   background: {fileID: 1175547147}
   foodController: {fileID: 8011604530064020175, guid: ddbf4f3f7ea50b1459e9db0d5cbf4b4b,
     type: 3}
   scoreManager: {fileID: 934437819}
+  snakeAgent: {fileID: 1806818133}
+  snakeAgent2: {fileID: 0}
+  snakeAcademy: {fileID: 1144424249}
 --- !u!1 &1398817158
 GameObject:
   m_ObjectHideFlags: 0
@@ -1674,7 +1746,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1891468202
+--- !u!1 &1614168915
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1682,46 +1754,97 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1891468204}
-  - component: {fileID: 1891468203}
+  - component: {fileID: 1614168917}
+  - component: {fileID: 1614168916}
   m_Layer: 0
-  m_Name: GameObjectNieuw
+  m_Name: AiSnakeController
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1891468203
+--- !u!114 &1614168916
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1891468202}
+  m_GameObject: {fileID: 1614168915}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bf6b4e160f5dc72498f13495e43e9304, type: 3}
+  m_Script: {fileID: 11500000, guid: 7ddb5d7eed644b042b9458fe21210536, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  snakePartsController: {fileID: 0}
-  snakeController: {fileID: 938890733}
-  spawnerController: {fileID: 1928934011}
-  background: {fileID: 1175547147}
+  snakeHeadDirection: 0
+  spawnerController: {fileID: 0}
   foodController: {fileID: 0}
-  scoreManager: {fileID: 0}
---- !u!4 &1891468204
+  snakeHeadObject: {fileID: 0}
+  snakeHead: {fileID: 0}
+--- !u!4 &1614168917
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1891468202}
+  m_GameObject: {fileID: 1614168915}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 304.5, y: 166.5, z: 0}
+  m_LocalPosition: {x: 5.171521, y: 10.118043, z: -2095.844}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 9
+  m_RootOrder: 12
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1806818132
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1806818134}
+  - component: {fileID: 1806818133}
+  m_Layer: 0
+  m_Name: SnakeAgent
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1806818133
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1806818132}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7567a7ef59aac2646beb02a0b4154845, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  brain: {fileID: 11400000, guid: 11ff0e8b768185a4a8d8069a90cb1f0a, type: 2}
+  agentParameters:
+    agentCameras: []
+    agentRenderTextures: []
+    maxStep: 0
+    resetOnDone: 0
+    onDemandDecision: 1
+    numberOfActionsBetweenDecisions: 1
+  snakeController: {fileID: 0}
+--- !u!4 &1806818134
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1806818132}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 5.171521, y: 10.118043, z: -2095.844}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 10
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1896220393
 GameObject:
@@ -1913,7 +2036,7 @@ PrefabInstance:
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 1891468203}
+      objectReference: {fileID: 0}
     - target: {fileID: 5958445684741893709, guid: 72f0307d64322174cb2a83885ae1c8aa,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
@@ -2211,7 +2334,7 @@ PrefabInstance:
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 1891468203}
+      objectReference: {fileID: 0}
     - target: {fileID: 5958445684741893709, guid: 72f0307d64322174cb2a83885ae1c8aa,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName

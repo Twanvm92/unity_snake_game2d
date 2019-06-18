@@ -8,46 +8,66 @@ public class GameManager : MonoBehaviour
 {
 	[SerializeField] private SnakePartsController snakePartsController;
 	[SerializeField] private SnakeController snakeController;
+	[SerializeField] private AiSnakeController aiSnakeController;
+	[SerializeField] private AiSnakeController2 aiSnakeController2;
 	[SerializeField] private SpawnerController spawnerController;
 	[SerializeField] private Background background;
 	[SerializeField] private FoodController foodController;
 	[SerializeField] private ScoreManager scoreManager;
+	[SerializeField] private SnakeAgent snakeAgent;
+	[SerializeField] private SnakeAgent2 snakeAgent2;
+	[SerializeField] private SnakeAcademy snakeAcademy;
 	private float snakeSpeed;
 	private float initialWaitTime = 1.0f;
-	private float snakeSpeedIncrease = 0.075f;
+	private float snakeSpeedIncrease = 0.045f;
 	
 	
 	private void Start()
 	{
-		snakeSpeed = 0.5f;
+		snakeSpeed = 0.4f;
 		spawnerController.Initialize(background);
 		foodController.Initialize(spawnerController);
+//		TODO is shut off to test playerbrain
+//		comment this to stop player snake from showing
 		snakeController.Initialize(snakePartsController, spawnerController, foodController, scoreManager);
+		
+		aiSnakeController.Initialize(snakePartsController, spawnerController, foodController, scoreManager);
+		if (aiSnakeController2 != null )
+		{
+            aiSnakeController2.Initialize(snakePartsController, spawnerController, foodController, scoreManager);
+		}
+
+		if (snakeAgent2 != null)
+		{
+            snakeAgent2.Initialize(aiSnakeController2);
+		}
+		snakeAgent.Initialize(aiSnakeController);
+		
+		snakeAcademy.Initialize(snakeAgent, snakeAgent2);
+		
+		
+//		GameObject food = foodController.InitializeFood();
+//		aiSnakeController.food = food;
+		
 //		TODO your own method instead of RestartGame?
 		snakeController.OnPlayerHitWallOrSnake += RestartGame;
+		aiSnakeController.OnAiHitWallOrSnake += RestartGameAi;
 		scoreManager.OnScoreReachedBoundary += GameWon;
 		scoreManager.OnScoreChanged += score => ChangeSnakeSpeed(score);
 		
-//		InvokeRepeating("MoveSnakeHeadDirection", 1.0f, 0.5f);
-//
-//		while (true)
-//		{
-//			yield return new WaitForSeconds(snakeSpeed);
-//			MoveSnakeHeadDirection();
-//			
-//		}
 
-//		WaitFunction func = Wait;
-//		StartCoroutine(func(2));
-//		
-
+//		comment this line to not let the player snake move anymore
 		StartCoroutine(MoveSnakeInInterval(initialWaitTime));
+
+//		StartCoroutine(MoveAiSnakeInInterval(initialWaitTime));
+//		comment this to not let the Ai snake move on interval anymore
+		StartCoroutine(RequestDecisionOnInterval(initialWaitTime));
 
 	}
 
 	private void ChangeSnakeSpeed(int score)
 	{
-		if (score % 2 == 0)
+		if (score % 2 == 0 && snakeSpeed > 0.15)
 		{
 			snakeSpeed -= snakeSpeedIncrease;
 		}
@@ -56,11 +76,30 @@ public class GameManager : MonoBehaviour
 	IEnumerator MoveSnakeInInterval(float f)
 	{
 		yield return new WaitForSeconds(f);
-		Debug.Log(f + " " + Time.time);
 		while( true )
 		{
             MoveSnakeHeadDirection();
-			Debug.Log ("current snake speed is "+ snakeSpeed);
+			yield return new WaitForSeconds(snakeSpeed) ;
+		}
+	}
+	
+	IEnumerator MoveAiSnakeInInterval(float f)
+	{
+		yield return new WaitForSeconds(f);
+		while( true )
+		{
+            MoveAiSnakeHeadDirection();
+			yield return new WaitForSeconds(snakeSpeed) ;
+		}
+	}
+	
+	IEnumerator RequestDecisionOnInterval(float f)
+	{
+		yield return new WaitForSeconds(f);
+		while( true )
+		{
+			snakeAgent.RequestDecision();
+			snakeAgent.RequestAction();
 			yield return new WaitForSeconds(snakeSpeed) ;
 		}
 	}
@@ -112,10 +151,23 @@ public class GameManager : MonoBehaviour
     {
 	    snakeController.Move();
     }
+    
+    private void MoveAiSnakeHeadDirection()
+    {
+	    aiSnakeController.Move();
+    }
 
 //    TODO Restart game/ win/lose screen?
     private void RestartGame()
     {
+	    Debug.Log("Player snake hit something!");
+	    SceneManager.LoadScene( SceneManager.GetActiveScene().name );
+	}
+    
+//    TODO Restart game/ win/lose screen?
+    private void RestartGameAi()
+    {
+	    Debug.Log("Ai hit something!");
 	    SceneManager.LoadScene( SceneManager.GetActiveScene().name );
 	}
 
